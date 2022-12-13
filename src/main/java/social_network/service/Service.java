@@ -8,8 +8,11 @@ import social_network.exceptions.RepositoryException;
 import social_network.exceptions.ValidationException;
 import social_network.repository.FriendshipRepository;
 import social_network.repository.UserRepository;
+import social_network.repository.database.FriendshipDBRepository;
+import social_network.repository.database.UserDBRepository;
 
 import java.util.*;
+import static java.util.stream.Collectors.toCollection;
 
 public class Service {
     private UserRepository userRepo;
@@ -17,21 +20,28 @@ public class Service {
 
     private UserValidator userValidator;
     private FriendshipValidator friendshipValidator;
+    private User currentUser;
 
-    public Service(UserRepository userRepo, FriendshipRepository friendshipRepo) {
-        this.userRepo = userRepo;
-        this.friendshipRepo = friendshipRepo;
+    public Service() {
+        String url = "jdbc:postgresql://localhost:5432/SocialNetwork";
+        this.friendshipRepo = new FriendshipDBRepository(url, "postgres", "postgres");
+        this.userRepo = new UserDBRepository(url, "postgres", "postgres");
         this.userValidator = new UserValidator();
         this.friendshipValidator = new FriendshipValidator();
+        updateUserFriends();
+    }
+    private void updateUserFriends() {
         for (Friendship friendship : friendshipRepo.getAll().values()) {
+            System.out.println(friendship);
+            User user1, user2;
             try {
-                User user1 = userRepo.find(friendship.getUser1());
-                User user2 = userRepo.find(friendship.getUser2());
+                user1 = userRepo.find(friendship.getUser1());
+                user2 = userRepo.find(friendship.getUser2());
+            } catch (RepositoryException e) {
+                throw new RuntimeException(e);
+            }
                 user1.addFriend(user2.getId());
                 user2.addFriend(user1.getId());
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -87,8 +97,8 @@ public class Service {
         }
     }
 
-    public void addUser(String name) throws ValidationException {
-        User user = new User(userRepo.getLastId(), name);
+    public void addUser(String name, String email, String password) throws ValidationException {
+        User user = new User(userRepo.getLastId(), name, email, password);
         userValidator.validate(user);
         userRepo.add(user);
     }
@@ -111,12 +121,11 @@ public class Service {
             throw new RepositoryException("Id doesn't exist!\n");
         }
     }
-
     public void addFriendship(int firstId, int secondId) throws RepositoryException, ValidationException {
         try {
             User firstUser = userRepo.find(firstId);
             if (firstUser.hasFriend(secondId)) {
-                throw new RepositoryException("Friendship already exists!\n");
+                throw new RepositoryException("Request already sent!\n");
             }
             User secondUser = userRepo.find(secondId);
             Friendship friendship = new Friendship(friendshipRepo.getLastId(), firstId, secondId);
@@ -129,17 +138,41 @@ public class Service {
         }
     }
 
-    public void removeFriendship(int firstId, int secondId) throws RepositoryException {
+    /*
+    public void addFriendship(int firstId, int secondId) throws RepositoryException, ValidationException {
         try {
             User firstUser = userRepo.find(firstId);
+            Friendship friendship = friendshipRepo.findByUsers(firstId, secondId);
+            if (friendship.getUser1() == firstId) {
+                throw new RepositoryException("Friend request already sent!\n");
+            }
+            if (friendshipRepo.findByUsers()) {
+            }
+            User secondUser = userRepo.find(secondId);
+            Friendship friendship = new Friendship(friendshipRepo.getLastId(), firstId, secondId);
+            friendshipValidator.validate(friendship);
+            friendshipRepo.add(friendship);
+            firstUser.addFriend(secondId);
+            secondUser.addFriend(firstId);
+        } catch (RuntimeException e) {
+            throw new RepositoryException("Id doesn't exist!\n");
+        }
+    }
+    */
+
+    public void removeFriendship(int firstId, int secondId) throws RepositoryException {
+        try {
+            Friendship friendship =  friendshipRepo.findByUsers(firstId, secondId);
+            User firstUser = userRepo.find(firstId);
+            System.out.println(firstUser);
             if (!firstUser.hasFriend(secondId)) {
                 throw new RepositoryException("Friendship doesn't exist!\n");
             }
             User secondUser = userRepo.find(secondId);
+            System.out.println(secondUser);
             firstUser.removeFriend(secondId);
             secondUser.removeFriend(firstId);
-            System.out.println(firstUser);
-            friendshipRepo.remove(friendshipRepo.getId(firstId, secondId));
+            friendshipRepo.remove(friendship.getId());
         } catch (NullPointerException e) {
             throw new RepositoryException("Id doesn't exist!\n");
         }
@@ -156,11 +189,46 @@ public class Service {
         });
     }
 
-    public void showFriendships() {
-        Collection<Friendship> friendships = friendshipRepo.getAll().values();
-        for (Friendship friendship : friendships) {
-            System.out.println(friendship);
+    public String getFriendshipStatus(int firstId, int secondId) {
+        try {
+            Friendship friendship = friendshipRepo.findByUsers(firstId, secondId);
+            return friendship.getStatus();
+        } catch(RepositoryException e) {
+            return "Not Friends";
         }
     }
 
+    public Friendship getFriendship(int firstID, int secondID) throws RepositoryException {
+        return friendshipRepo.findByUsers(firstID, secondID);
+    }
+    public List<Friendship> getFriendships() {
+        return friendshipRepo.getAll().values().stream().collect(toCollection(ArrayList::new));
+    }
+
+    public User findUserByEmail(String text) {
+        return userRepo.findByEmail(text);
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+    public User getCurrentUser() {
+        return this.currentUser;
+    }
+
+    public List<User> getUsers() {
+        return userRepo.getAll().values().stream().collect(toCollection(ArrayList::new));
+    }
+
+    public void acceptFriendship(Integer id1, Integer id2) throws RepositoryException {
+        Friendship friendship = friendshipRepo.findByUsers(id1, id2);
+        friendship.setStatus("friendship");
+        friendshipRepo.update(friendship);
+    }
+
+    public void reload() {
+        friendshipRepo.reload();
+        userRepo.reload();
+        updateUserFriends();
+    }
 }

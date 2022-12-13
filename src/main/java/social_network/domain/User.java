@@ -5,6 +5,25 @@ import java.util.HashSet;
 public class User {
     private Integer id;
     private String name;
+    private String email;
+
+    private String password;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 
     private HashSet<Integer> friends;
 
@@ -24,9 +43,11 @@ public class User {
         return friends;
     }
 
-    public User(Integer id, String name) {
+    public User(Integer id, String name, String email, String password) {
         this.id = id;
         this.name = name;
+        this.email = email;
+        this.password = password;
         this.friends = new HashSet<Integer>();
     }
     public boolean hasFriend(Integer id) {
@@ -42,6 +63,6 @@ public class User {
 
     @Override
     public String toString() {
-        return getId().toString() + " " + getName() + " " + getFriends();
+        return getId() + " " + getName() + " " + getEmail() + getFriends();
     }
 }

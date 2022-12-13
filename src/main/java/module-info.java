@@ -12,4 +12,5 @@ module socialnetwork {
     exports social_network;
     exports social_network.controller;
     opens social_network.controller to javafx.fxml;
+    opens social_network.domain to javafx.base;
 }

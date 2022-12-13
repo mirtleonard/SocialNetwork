@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="501.0" prefWidth="383.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19">
+    <children>
+        <TableView fx:id="friendshipTable" prefHeight="501.0" prefWidth="376.0">
+            <columns>
+                <TableColumn fx:id="userNameColumn" prefWidth="115.19994658231735" text="User Name" />
+                <TableColumn fx:id="dateColumn" prefWidth="130.40003204345703" text="Date" />
+                <TableColumn fx:id="statusColumn" prefWidth="128.8000030517578" text="Status" />
+            </columns>
+        </TableView>
+    </children>
+</AnchorPane>

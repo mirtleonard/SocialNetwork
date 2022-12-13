@@ -35,14 +35,23 @@ public class UserRepository implements  Repository<Integer, User>{
     }
 
     public User find(Integer friendId) throws RepositoryException {
-       try {
-           User user = users.get(friendId);
-           if (user == null) {
-               throw new NullPointerException();
-           }
-           return user;
-       } catch(NullPointerException E) {
+       User user = users.get(friendId);
+       if (user == null) {
            throw new RepositoryException("Id doesn't exist!");
        }
+       return user;
+    }
+
+    public User findByEmail(String email) {
+        for (User user : users.values()) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void reload() {
+       users.clear();
     }
 }

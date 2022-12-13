@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+/*
+
 public class CLI {
     private Service service;
     private static BufferedReader reader;
@@ -114,3 +116,4 @@ public class CLI {
         }
     }
 }
+*/

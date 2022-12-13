@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane fx:id="mainPain" dividerPositions="0.6390293225480282" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="502.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <items>
+        <AnchorPane fx:id="displayPane" minHeight="0.0" minWidth="0.0" prefHeight="501.0" prefWidth="383.0" />
+        <AnchorPane fx:id="menu" minHeight="0.0" minWidth="0.0" prefHeight="501.0" prefWidth="482.0">
+            <children>
+                <Button layoutX="30.0" layoutY="237.0" mnemonicParsing="false" onAction="#getRequests" prefHeight="18.0" prefWidth="150.0" text="See Requests" />
+                <Button layoutX="30.0" layoutY="276.0" mnemonicParsing="false" onAction="#getUsers" prefHeight="26.0" prefWidth="150.0" text="Search User" />
+                <Button layoutX="31.0" layoutY="425.0" mnemonicParsing="false" onAction="#reload" prefHeight="26.0" prefWidth="150.0" text="Refresh" />
+            <Label fx:id="userNameLabel" alignment="CENTER" layoutX="62.0" layoutY="50.0" prefHeight="18.0" prefWidth="87.0" text="Hello">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font></Label>
+            </children>
+        </AnchorPane>
+    </items>
+</SplitPane>

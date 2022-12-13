@@ -24,7 +24,7 @@ public class UserFileRepository extends UserRepository {
                 if (values.length == 1) {
                     super.lastId = Integer.parseInt(values[0]);
                 } else {
-                    User user = new User(Integer.parseInt(values[0]), values[1]);
+                    User user = new User(Integer.parseInt(values[0]), values[1], values[2], values[3]);
                     try {
                         super.add(user);
                     } catch (Exception e) {

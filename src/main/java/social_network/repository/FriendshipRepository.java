@@ -17,21 +17,12 @@ public class FriendshipRepository implements Repository<Integer, Friendship> {
         friendships = new HashMap<Integer, Friendship>();
     }
 
-    public Integer getId(Integer id1, Integer id2) {
-        for (Friendship friendship : friendships.values()) {
-            if (friendship.getUser1() == id1 && friendship.getUser2() == id2) {
-                return friendship.getId();
-            }
-        }
-        return -1;
-    }
     public void add(Friendship friendship) {
         friendships.put(friendship.getId(), friendship);
     }
 
     public Integer getLastId() { return lastId++;}
     public void remove(Integer id) {
-        System.out.println(id);
         friendships.remove(id);
     }
 
@@ -41,5 +32,23 @@ public class FriendshipRepository implements Repository<Integer, Friendship> {
 
     public Friendship find(Integer id) {
         return friendships.get(id);
+    }
+
+    public Friendship findByUsers(Integer firstId, Integer secondId) throws RepositoryException {
+        for (Friendship friendship : friendships.values()) {
+            if ((friendship.getUser1() == firstId && friendship.getUser2() == secondId) ||
+                    (friendship.getUser1() == secondId && friendship.getUser2() == firstId)) {
+                return friendship;
+            }
+        }
+        throw new RepositoryException("Friendship not found");
+    }
+
+    public void update(Friendship friendship) {
+        friendships.put(friendship.getId(), friendship);
+    }
+
+    public void reload() {
+        friendships.clear();
     }
 }
